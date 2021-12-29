@@ -321,6 +321,7 @@ func geth(ctx *cli.Context) error {
 	// 2. 设置默认缓存值（如果没有在flag -cache设置）主网络 全节点为4G 轻节点为128M
 	// 3. 开启度量工具 监控系统状态 cpu memory disk
 	prepare(ctx)
+	// 如果是light sync模式 backend就是light
 	stack, backend := makeFullNode(ctx)
 	defer stack.Close()
 

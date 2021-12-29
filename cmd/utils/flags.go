@@ -246,6 +246,7 @@ var (
 		Value: 2048,
 	}
 	OverrideArrowGlacierFlag = cli.Uint64Flag{
+		// 箭头冰川硬分叉，意在推迟难度炸弹（难度炸弹->以太坊网络从PoW过度至PoS）
 		Name:  "override.arrowglacier",
 		Usage: "Manually specify Arrow Glacier fork-block, overriding the bundled setting",
 	}
@@ -790,6 +791,7 @@ var (
 		Value: metrics.DefaultConfig.InfluxDBOrganization,
 	}
 
+	// CatalystFlag eth2集成测试
 	CatalystFlag = cli.BoolFlag{
 		Name:  "catalyst",
 		Usage: "Catalyst mode (eth2 integration testing)",

@@ -64,6 +64,7 @@ type Config = ethconfig.Config
 
 // Ethereum implements the Ethereum full node service.
 type Ethereum struct {
+	// 包含eth和les协议的配置选项
 	config *ethconfig.Config
 
 	// Handlers
