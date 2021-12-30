@@ -81,11 +81,14 @@ type LightEthereum struct {
 
 // New creates an instance of the light client.
 func New(stack *node.Node, config *ethconfig.Config) (*LightEthereum, error) {
+	// dev返回map[string][]byte 其它模式下返回leveldb
 	chainDb, err := stack.OpenDatabase("lightchaindata", config.DatabaseCache, config.DatabaseHandles, "eth/db/chaindata/", false)
 	if err != nil {
 		return nil, err
 	}
+	// 轻节点模式才会有lesDb
 	lesDb, err := stack.OpenDatabase("les.client", 0, 0, "eth/db/lesclient/", false)
+	// TODO chainDb lesDb的作用？
 	if err != nil {
 		return nil, err
 	}

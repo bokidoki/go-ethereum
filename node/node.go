@@ -563,9 +563,12 @@ func (n *Node) OpenDatabase(name string, cache, handles int, namespace string, r
 
 	var db ethdb.Database
 	var err error
+	// dev 网络下 DataDir 为 ""
 	if n.config.DataDir == "" {
+		// 使用 map[string][]byte 实现 KeyValueStore
 		db = rawdb.NewMemoryDatabase()
 	} else {
+		// 使用leveldb 实现 KeyValueStore
 		db, err = rawdb.NewLevelDBDatabase(n.ResolvePath(name), cache, handles, namespace, readonly)
 	}
 
