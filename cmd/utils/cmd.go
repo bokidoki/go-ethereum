@@ -72,6 +72,8 @@ func StartNode(ctx *cli.Context, stack *node.Node) {
 	if err := stack.Start(); err != nil {
 		Fatalf("Error starting protocol stack: %v", err)
 	}
+
+	// 处理ctrl+c或者是terminal信号做相应的处理
 	go func() {
 		sigc := make(chan os.Signal, 1)
 		signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
@@ -89,6 +91,7 @@ func StartNode(ctx *cli.Context, stack *node.Node) {
 
 		<-sigc
 		log.Info("Got interrupt, shutting down...")
+		// RPC(http ws ipc) Lifecycle P2P
 		go stack.Close()
 		for i := 10; i > 0; i-- {
 			<-sigc

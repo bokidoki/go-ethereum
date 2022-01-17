@@ -51,7 +51,7 @@ import (
 
 type LightEthereum struct {
 	lesCommons
-
+	// set of active server peers currently participating in the Light Ethereum sub-protocol.
 	peers              *serverPeerSet
 	reqDist            *requestDistributor
 	retriever          *retrieveManager
@@ -98,6 +98,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*LightEthereum, error) {
 	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
+	// track the active server peers
 	peers := newServerPeerSet()
 	merger := consensus.NewMerger(chainDb)
 	leth := &LightEthereum{
@@ -112,7 +113,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*LightEthereum, error) {
 		},
 		peers:          peers,
 		eventMux:       stack.EventMux(),
-		reqDist:        newRequestDistributor(peers, &mclock.System{}),
+		reqDist:        newRequestDistributor(peers, &mclock.System{}), // todo RequestDistributor
 		accountManager: stack.AccountManager(),
 		merger:         merger,
 		engine:         ethconfig.CreateConsensusEngine(stack, chainConfig, &config.Ethash, nil, false, chainDb),
@@ -155,10 +156,13 @@ func New(stack *node.Node, config *ethconfig.Config) (*LightEthereum, error) {
 
 	// Note: AddChildIndexer starts the update process for the child
 	leth.bloomIndexer.AddChildIndexer(leth.bloomTrieIndexer)
+
+	// TODO chain head event
 	leth.chtIndexer.Start(leth.blockchain)
 	leth.bloomIndexer.Start(leth.blockchain)
 
 	// Start a light chain pruner to delete useless historical data.
+	// TODO  怎么定义无效的历史数据？
 	leth.pruner = newPruner(chainDb, leth.chtIndexer, leth.bloomTrieIndexer)
 
 	// Rewind the chain in case of an incompatible config upgrade.
@@ -169,6 +173,8 @@ func New(stack *node.Node, config *ethconfig.Config) (*LightEthereum, error) {
 	}
 
 	leth.ApiBackend = &LesApiBackend{stack.Config().ExtRPCEnabled(), stack.Config().AllowUnprotectedTxs, leth, nil}
+
+	// GPO = Gas Price Oracle 汽油费预测
 	gpoParams := config.GPO
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.Miner.GasPrice

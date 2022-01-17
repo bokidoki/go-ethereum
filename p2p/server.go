@@ -514,7 +514,7 @@ func (srv *Server) setupLocalNode() error {
 	switch srv.NAT.(type) {
 	case nil:
 		// No NAT interface, do nothing.
-	case nat.ExtIP:
+	case nat.ExtIP: // external IP
 		// ExtIP doesn't block, set the IP right away.
 		ip, _ := srv.NAT.ExternalIP()
 		srv.localnode.SetStaticIP(ip)

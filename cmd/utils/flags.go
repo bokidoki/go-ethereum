@@ -1719,6 +1719,7 @@ func RegisterEthService(stack *node.Node, cfg *ethconfig.Config, isCatalyst bool
 		if err != nil {
 			Fatalf("Failed to register the Ethereum service: %v", err)
 		}
+		// register 就是将API 添加到[]rpc.API数组中
 		stack.RegisterAPIs(tracers.APIs(backend.ApiBackend))
 		if isCatalyst {
 			if err := catalyst.RegisterLight(stack, backend); err != nil {

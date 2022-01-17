@@ -47,6 +47,7 @@ import (
 	"gopkg.in/urfave/cli.v1"
 )
 
+// geth subcommand e.g. geth account list
 const (
 	clientIdentifier = "geth" // Client identifier to advertise over the network
 )
@@ -325,6 +326,7 @@ func geth(ctx *cli.Context) error {
 	stack, backend := makeFullNode(ctx)
 	defer stack.Close()
 
+	// TODO 开启所有已经注册的协议，解锁请求的账户，开启RPC/IPC接口，并开始挖矿。
 	startNode(ctx, stack, backend)
 	stack.Wait()
 	return nil

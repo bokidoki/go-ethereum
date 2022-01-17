@@ -364,6 +364,9 @@ func (w *worker) newWorkLoop(recommit time.Duration) {
 	<-timer.C // discard the initial tick
 
 	// commit aborts in-flight transaction execution with given signal and resubmits a new one.
+	// 该方法发送了一个newWorkReq信号
+	// mainLoop 收到信号后执行 commitNewWork
+	// commitNewWork 会立即中断当前的挖矿，以当前block为parent构造block并开始挖矿
 	commit := func(noempty bool, s int32) {
 		if interrupt != nil {
 			atomic.StoreInt32(interrupt, s)
@@ -390,11 +393,14 @@ func (w *worker) newWorkLoop(recommit time.Duration) {
 
 	for {
 		select {
+		// 收到开始挖矿的信号会调用上面的commit方法
+		// 构造Miner的时候会发送该信号，init = true
+		// 调用miner调用start方法
 		case <-w.startCh:
 			clearPending(w.chain.CurrentBlock().NumberU64())
 			timestamp = time.Now().Unix()
 			commit(false, commitInterruptNewHead)
-
+		// 区块链头
 		case head := <-w.chainHeadCh:
 			clearPending(head.Block.NumberU64())
 			timestamp = time.Now().Unix()
