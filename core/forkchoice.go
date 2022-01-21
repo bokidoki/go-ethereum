@@ -45,6 +45,7 @@ type ChainReader interface {
 // choice used in the eth2). This main goal of this ForkChoice is not only for
 // offering fork choice during the eth1/2 merge phase, but also keep the compatibility
 // for all other proof-of-work networks.
+// 在eth1上判断是否分叉的依据是最高总难度，eth2则根据外部分叉选择
 type ForkChoice struct {
 	chain ChainReader
 	rand  *mrand.Rand
@@ -76,6 +77,7 @@ func NewForkChoice(chainReader ChainReader, preserve func(header *types.Header) 
 // header is always selected as the head.
 func (f *ForkChoice) ReorgNeeded(current *types.Header, header *types.Header) (bool, error) {
 	var (
+		// TD 总难度
 		localTD  = f.chain.GetTd(current.Hash(), current.Number.Uint64())
 		externTd = f.chain.GetTd(header.Hash(), header.Number.Uint64())
 	)

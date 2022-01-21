@@ -278,6 +278,7 @@ type txpoolResetRequest struct {
 // transactions from the network.
 func NewTxPool(config TxPoolConfig, chainconfig *params.ChainConfig, chain blockChain) *TxPool {
 	// Sanitize the input to ensure no vulnerable gas prices are set
+	// 检查TxPoolConfig的边界值，超过边界值的使用默认值 DefaultTxPoolConfig
 	config = (&config).sanitize()
 
 	// Create the transaction pool with its initial settings
@@ -285,8 +286,8 @@ func NewTxPool(config TxPoolConfig, chainconfig *params.ChainConfig, chain block
 		config:          config,
 		chainconfig:     chainconfig,
 		chain:           chain,
-		signer:          types.LatestSigner(chainconfig),
-		pending:         make(map[common.Address]*txList),
+		signer:          types.LatestSigner(chainconfig),  // signer 作用是什么？ 用于校验交易的签名
+		pending:         make(map[common.Address]*txList), // account address -> tx list
 		queue:           make(map[common.Address]*txList),
 		beats:           make(map[common.Address]time.Time),
 		all:             newTxLookup(),

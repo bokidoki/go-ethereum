@@ -61,6 +61,7 @@ func MakeSigner(config *params.ChainConfig, blockNumber *big.Int) Signer {
 //
 // Use this in transaction-handling code where the current block number is unknown. If you
 // have the current block number available, use MakeSigner instead.
+// 最新的signer
 func LatestSigner(config *params.ChainConfig) Signer {
 	if config.ChainID != nil {
 		if config.LondonBlock != nil {
@@ -153,8 +154,11 @@ func Sender(signer Signer, tx *Transaction) (common.Address, error) {
 //
 // Note that this interface is not a stable API and may change at any time to accommodate
 // new protocol rules.
+// 封装了一些对交易签名的处理方法，用于验证和处理签名。
+// 可能由协议的更改而改变 POW->POA
 type Signer interface {
 	// Sender returns the sender address of the transaction.
+	// 返回交易发送者的地址
 	Sender(tx *Transaction) (common.Address, error)
 
 	// SignatureValues returns the raw R, S, V values corresponding to the
@@ -164,6 +168,7 @@ type Signer interface {
 
 	// Hash returns 'signature hash', i.e. the transaction hash that is signed by the
 	// private key. This hash does not uniquely identify the transaction.
+	// 签名哈希即由私钥签名的交易哈希
 	Hash(tx *Transaction) common.Hash
 
 	// Equal returns true if the given signer is the same as the receiver.
